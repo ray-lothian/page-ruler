@@ -94,6 +94,38 @@ const context = () => chrome.storage.local.get({
     contexts: ['action']
   });
   chrome.contextMenus.create({
+    title: '5px',
+    id: 'size.5',
+    parentId: 'size',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.size === 5
+  });
+  chrome.contextMenus.create({
+    title: '10px',
+    id: 'size.10',
+    parentId: 'size',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.size === 10
+  });
+  chrome.contextMenus.create({
+    title: '15px',
+    id: 'size.15',
+    parentId: 'size',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.size === 15
+  });
+  chrome.contextMenus.create({
+    title: '20px',
+    id: 'size.20',
+    parentId: 'size',
+    contexts: ['action'],
+    type: 'radio',
+    checked: prefs.size === 20
+  });
+  chrome.contextMenus.create({
     title: '50px',
     id: 'size.50',
     parentId: 'size',
