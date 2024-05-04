@@ -54,22 +54,37 @@ body:not([data-busy=true])::before {
   pointer-events: none;
   position: absolute;
   background-color: #ff8b8b4d;
+  mix-blend-mode: color-burn;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  box-shadow: 0 0 0 1px #ff8b8b inset;
+  text-shadow: 0 0 10px #fff;
+}
+#ruler[data-start='']::before {
+  display: none;
 }
 #ruler::before {
   position: absolute;
-  top: -2ch;
+  top: calc(-2ch - 3px);
+  padding: 2px;
   left: 0;
   content: attr(data-start);
   background-color: #fff;
+  white-space: nowrap;
+  border-left: solid 1px #ff8b8b;
 }
 #ruler::after {
   content: attr(data-end);
   position: absolute;
   right: 0;
-  bottom: -2ch;
+  bottom: calc(-2ch - 3px);
+  padding: 2px;
   background-color: #fff;
+  white-space: nowrap;
+  border-right: solid 1px #ff8b8b;
+}
+#ruler[data-end='']::after {
+  display: none;
 }

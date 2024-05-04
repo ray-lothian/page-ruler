@@ -1,7 +1,7 @@
 chrome.storage.local.get({
   size: 50,
   width: 1
-}, async prefs => {
+}, prefs => {
   document.body.style.setProperty('--size', prefs.size + 'px');
   document.body.style.setProperty('--thickness', prefs.width + 'px');
 
@@ -33,7 +33,7 @@ const mousemove = e => {
   ruler.style.top = y1 + 'px';
   ruler.style.width = (x2 - x1) + 'px';
   ruler.style.height = (y2 - y1) + 'px';
-  if (x2 - x1 > 100 || y2 - y1 > 100) {
+  if (x2 - x1 > 5 || y2 - y1 > 5) {
     ruler.dataset.start = `${x1}px × ${y1}px`;
     ruler.dataset.end = `${x2}px × ${y2}px`;
   }
@@ -49,7 +49,7 @@ const mousemove = e => {
   }
 };
 
-window.addEventListener('mousedown', e => {
+addEventListener('mousedown', e => {
   pos.pageX = e.pageX;
   pos.pageY = e.pageY;
   ruler.style.width = 0;
@@ -60,15 +60,15 @@ window.addEventListener('mousedown', e => {
 
   document.body.dataset.busy = true;
 
-  window.addEventListener('mousemove', mousemove);
-  window.addEventListener('mouseup', () => {
+  addEventListener('mousemove', mousemove);
+  addEventListener('mouseup', () => {
     window.removeEventListener('mousemove', mousemove);
   }, {
     once: true
   });
 });
 
-window.addEventListener('keydown', e => {
+addEventListener('keydown', e => {
   if (e.code === 'Escape') {
     if (window.top === window) {
       window.close();

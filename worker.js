@@ -2,9 +2,9 @@ chrome.runtime.onMessage.addListener((request, sender) => {
   chrome.action.setIcon({
     tabId: sender.tab.id,
     path: {
-      '16': 'data/icons/16.png',
-      '32': 'data/icons/32.png',
-      '48': 'data/icons/48.png'
+      '16': '/data/icons/16.png',
+      '32': '/data/icons/32.png',
+      '48': '/data/icons/48.png'
     }
   });
   chrome.scripting.executeScript({
@@ -32,23 +32,36 @@ chrome.action.onClicked.addListener(async tab => {
           return true;
         }
         else {
-          const f = document.createElement('iframe');
-          f.style = `
-            position: fixed;
-            z-index: 2147483647;
-            border: none;
-            left: 0;
-            top: 0;
-            width: 100vw;
-            height: 100vh;
-            left: 0;
-            top: 0
+          const style = document.createElement('style');
+          style.classList.add('pgrwx');
+          style.textContent = `
+            dialog.pgrwx {
+              background: transparent;
+              max-width: initial;
+              max-height: initial;
+              padding: 0;
+              margin: 0;
+              box-sizing: border-box;
+              border: none;
+              color-scheme: light;
+            }
+            dialog.pgrwx::backdrop {
+              background: transparent;
+            }
+            dialog.pgrwx > iframe {
+              border: none;
+              width: 100vw;
+              height: 100vh;
+            }
           `;
-          f.classList.add('pgrwx');
+          const dialog = document.createElement('dialog');
+          dialog.classList.add('pgrwx');
+          const f = document.createElement('iframe');
           f.src = chrome.runtime.getURL('/data/view/index.html?tabId=' + tabId);
-          document.body.appendChild(f);
+          dialog.append(f);
+          (document.body || document.documentElement).append(style, dialog);
+          dialog.showModal();
           f.focus();
-
           return false;
         }
       },
@@ -57,15 +70,15 @@ chrome.action.onClicked.addListener(async tab => {
     chrome.action.setIcon({
       tabId: tab.id,
       path: {
-        '16': 'data/icons/' + (r[0].result ? '' : 'active/') + '16.png',
-        '32': 'data/icons/' + (r[0].result ? '' : 'active/') + '32.png',
-        '48': 'data/icons/' + (r[0].result ? '' : 'active/') + '48.png'
+        '16': '/data/icons/' + (r[0].result ? '' : 'active/') + '16.png',
+        '32': '/data/icons/' + (r[0].result ? '' : 'active/') + '32.png',
+        '48': '/data/icons/' + (r[0].result ? '' : 'active/') + '48.png'
       }
     });
   }
   catch (e) {
     chrome.tabs.create({
-      url: 'data/view/index.html',
+      url: '/data/view/index.html',
       index: tab.index + 1
     });
   }
@@ -75,7 +88,6 @@ const context = () => chrome.storage.local.get({
   size: 50,
   width: 1
 }, prefs => {
-  console.log(prefs);
   chrome.contextMenus.create({
     title: 'Grid Size',
     id: 'size',
@@ -172,7 +184,6 @@ chrome.runtime.onStartup.addListener(context);
 chrome.runtime.onInstalled.addListener(context);
 
 chrome.contextMenus.onClicked.addListener(info => {
-  console.log(info);
   if (info.menuItemId.startsWith('width.')) {
     chrome.storage.local.set({
       'width': Number(info.menuItemId.slice(6))
