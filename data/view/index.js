@@ -84,6 +84,10 @@ const mousemove = e => {
 };
 
 addEventListener('mousedown', e => {
+  if (e.button !== 0) {
+    return;
+  }
+
   pos.pageX = e.pageX;
   pos.pageY = e.pageY;
   ruler.style.width = 0;
