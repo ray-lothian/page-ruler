@@ -1,19 +1,53 @@
+const resize = (size = resize.size) => {
+  document.body.style.setProperty('--size', size + 'px');
+  document.getElementById('unit').dataset.msg = size + 'px';
+
+  resize.size = size;
+};
+
+const wheel = {
+  observe(e) {
+    const d = Math.round(e.deltaY / 10) || (e.deltaY > 0 ? 1 : -1);
+
+    if (resize.size) {
+      resize.size = Math.max(5, resize.size - d);
+      resize();
+
+      e.preventDefault();
+    }
+  },
+  enable() {
+    removeEventListener('wheel', wheel.observe, {passive: false});
+    addEventListener('wheel', wheel.observe, {passive: false});
+  },
+  disable() {
+    removeEventListener('wheel', wheel.observe, {passive: false});
+  }
+};
+
 chrome.storage.local.get({
   size: 50,
-  width: 1
+  width: 1,
+  wheel: true
 }, prefs => {
-  document.body.style.setProperty('--size', prefs.size + 'px');
+  resize(prefs.size);
   document.body.style.setProperty('--thickness', prefs.width + 'px');
-
-  document.getElementById('unit').dataset.msg = prefs.size + 'px';
+  if (prefs.wheel) {
+    wheel.enable();
+  }
 });
 chrome.storage.onChanged.addListener(ps => {
   if (ps.size) {
-    document.body.style.setProperty('--size', ps.size.newValue + 'px');
-    document.getElementById('unit').dataset.msg = ps.size.newValue + 'px';
+    resize(ps.size.newValue);
   }
   if (ps.width) {
     document.body.style.setProperty('--thickness', ps.width.newValue + 'px');
+  }
+  if (ps.wheel && ps.wheel.newValue) {
+    wheel.enable();
+  }
+  if (ps.wheel && ps.wheel.newValue === false) {
+    wheel.disable();
   }
 });
 

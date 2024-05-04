@@ -86,7 +86,8 @@ chrome.action.onClicked.addListener(async tab => {
 
 const context = () => chrome.storage.local.get({
   size: 50,
-  width: 1
+  width: 1,
+  wheel: true
 }, prefs => {
   chrome.contextMenus.create({
     title: 'Grid Size',
@@ -211,6 +212,13 @@ const context = () => chrome.storage.local.get({
     type: 'radio',
     checked: prefs.width === 5
   });
+  chrome.contextMenus.create({
+    title: 'Allow Wheel Resizing',
+    id: 'wheel',
+    contexts: ['action'],
+    type: 'checkbox',
+    checked: prefs.wheel
+  });
 });
 chrome.runtime.onStartup.addListener(context);
 chrome.runtime.onInstalled.addListener(context);
@@ -224,6 +232,11 @@ chrome.contextMenus.onClicked.addListener(info => {
   else if (info.menuItemId.startsWith('size.')) {
     chrome.storage.local.set({
       'size': Number(info.menuItemId.slice(5))
+    });
+  }
+  else if (info.menuItemId === 'wheel') {
+    chrome.storage.local.set({
+      'wheel': info.checked
     });
   }
 });
